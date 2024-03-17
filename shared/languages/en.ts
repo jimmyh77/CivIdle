@@ -1031,4 +1031,7 @@ export const EN = {
    PlayerTradeFiltersClear: "Clear",
    GrandBazaarTabTrades: "Trades",
    GrandBazaarTabActive: "Active",
+   UpgradeBatchModeAll: "All",
+   UpgradeBatchModeAdjacent: "Adjacent",
+   UpgradeBatchModeCluster: "Cluster",
 };

@@ -16,8 +16,13 @@ import { jsxMapOf } from "../utilities/Helper";
 import { useShortcut } from "../utilities/Hook";
 import { Singleton } from "../utilities/Singleton";
 import type { IBuildingComponentProps } from "./BuildingPage";
+import { useState } from "react";
+
+type BatchUpgradeMode = "all" | "adjacent" | "cluster";
 
 export function BuildingUpgradeComponent({ gameState, xy }: IBuildingComponentProps): React.ReactNode {
+   const [selectedBatchMode, setSelectedBatchMode] = useState<BatchUpgradeMode>("all");
+
    const tile = gameState.tiles.get(xy);
    const building = tile?.building;
    if (!building) {
@@ -33,6 +38,14 @@ export function BuildingUpgradeComponent({ gameState, xy }: IBuildingComponentPr
       building.status = "upgrading";
       notifyGameStateUpdate();
    };
+
+   const upgradeModes = [
+      { type: "all", text: () => L.UpgradeBatchModeAll },
+      { type: "adjacent", text: () => L.UpgradeBatchModeAdjacent },
+      { type: "cluster", text: () => L.UpgradeBatchModeCluster },
+   ];
+   const batchUpgrade = (level: number) => {};
+
    useShortcut("BuildingPageUpgradeX1", () => upgrade(levels[0]), [xy]);
    useShortcut("BuildingPageUpgradeX5", () => upgrade(levels[1]), [xy]);
    useShortcut("BuildingPageUpgradeToNext10", () => upgrade(levels[2]), [xy]);
@@ -68,6 +81,49 @@ export function BuildingUpgradeComponent({ gameState, xy }: IBuildingComponentPr
                   >
                      <button className="f1" onClick={() => upgrade(level)}>
                         x{level}
+                     </button>
+                  </Tippy>
+               ))}
+            </div>
+            <div className="separator"></div>
+            <div className="row">
+               <div className="text-strong mr10">Batch Mode</div>
+               {upgradeModes.map((m) => (
+                  <>
+                     <label
+                        className="pointer"
+                        onPointerDown={() => {
+                           setSelectedBatchMode(m.type as BatchUpgradeMode);
+                        }}
+                     >
+                        {selectedBatchMode === m.type ? (
+                           <div className="m-icon small text-green">radio_button_checked</div>
+                        ) : (
+                           <div className="m-icon small">radio_button_unchecked</div>
+                        )}
+                        {t(m.text())}
+                     </label>
+
+                     <div className="mr5"></div>
+                  </>
+               ))}
+            </div>
+            <div className="sep10"></div>
+            <div className="row">
+               <div className="text-strong mr10">Batch Upgrade</div>
+               {[1].map((level, idx) => (
+                  <Tippy
+                     key={idx}
+                     content={`${t(L.Upgrade)} x${level}: ${mapOf(
+                        getTotalBuildingCost(building.type, building.level, building.level + level),
+                        (res, amount) => {
+                           return `${Config.Resource[res].name()} ${formatNumber(amount)}`;
+                        },
+                     ).join(", ")}`}
+                     placement="top"
+                  >
+                     <button className="f1" onClick={() => batchUpgrade(level)}>
+                        To Level {building.level}
                      </button>
                   </Tippy>
                ))}
