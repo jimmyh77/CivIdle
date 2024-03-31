@@ -335,6 +335,9 @@ export const EN = {
    GoldenGateBridgeDesc:
       "All power plants get +1 Production Multiplier. Provide power to all tiles within 2 tile range",
    GoldMiningCamp: "Gold Mining Camp",
+   PortOfSingapore: "Port Of Singapore",
+   PortOfSingaporeDesc:
+      "Manage all your caravansarys. Adjacent warehouses get +5 Production and Storage Multiplier.",
    GrandBazaar: "Grand Bazaar",
    GrandBazaarDesc:
       "Manage all your markets. Adjacent caravansaries get +5 Production and Storage Multiplier. Adjacent markets get different trades",

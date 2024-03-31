@@ -1047,6 +1047,16 @@ export class BuildingDefinitions {
       special: BuildingSpecial.WorldWonder,
       wikipedia: "Grand_Bazaar,_Istanbul",
    };
+   PortOfSingapore: IBuildingDefinition = {
+      name: () => t(L.PortOfSingapore),
+      desc: () => t(L.PortOfSingaporeDesc),
+      input: {},
+      output: {},
+      max: 1,
+      construction: { Wood: 1 },
+      special: BuildingSpecial.WorldWonder,
+      wikipedia: "Port_of_Singapore",
+   };
    AbuSimbel: IBuildingDefinition = {
       name: () => t(L.AbuSimbel),
       desc: () => t(L.AbuSimbelDesc),

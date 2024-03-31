@@ -6,6 +6,7 @@ import type { ITileData } from "../../../shared/logic/Tile";
 import type { Tile } from "../../../shared/utilities/Helper";
 import { useGameState } from "../Global";
 import { Singleton } from "../utilities/Singleton";
+import { CaravanWarehouseWonder } from "./CaravanWarehouseWonder";
 import { DefaultBuildingBody } from "./DefaultBuildingBody";
 import { GrandBazaarBuildingBody } from "./GrandBazaarBuildingBody";
 import { HeadquarterBuildingBody } from "./HeadquarterBuildingBody";
@@ -30,6 +31,7 @@ const BuildingBodyOverride: Partial<Record<Building, FunctionComponent<IBuilding
    OxfordUniversity: OxfordUniversityBuildingBody,
    StPetersBasilica: StPetersBasilicaBuildingBody,
    GrandBazaar: GrandBazaarBuildingBody,
+   PortOfSingapore: CaravanWarehouseWonder,
    UnitedNations: UnitedNationsBuildingBody,
 };
 
