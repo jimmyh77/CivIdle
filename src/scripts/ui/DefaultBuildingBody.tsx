@@ -14,6 +14,7 @@ import { BuildingUpgradeComponent } from "./BuildingUpgradeComponent";
 import { BuildingValueComponent } from "./BuildingValueComponent";
 import { BuildingWikipediaComponent } from "./BuildingWikipediaComponent";
 import { BuildingWorkerComponent } from "./BuildingWorkerComponent";
+import { BuildingResourceWatch } from "./BuildingResourceWatch";
 
 export function DefaultBuildingBody({ gameState, xy }: IBuildingComponentProps): React.ReactNode {
    return (
@@ -31,6 +32,7 @@ export function DefaultBuildingBody({ gameState, xy }: IBuildingComponentProps):
          <BuildingInputModeComponent gameState={gameState} xy={xy} />
          <BuildingValueComponent gameState={gameState} xy={xy} />
          <BuildingWikipediaComponent gameState={gameState} xy={xy} />
+         <BuildingResourceWatch gameState={gameState} xy={xy} />
          <BuildingColorComponent gameState={gameState} xy={xy} />
          <BuildingSellComponent gameState={gameState} xy={xy} />
       </div>
