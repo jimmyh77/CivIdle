@@ -44,7 +44,7 @@ import type { IBuildingComponentProps } from "./BuildingPage";
 import { BuildingFilter, Filter } from "./FilterComponent";
 import { FormatNumber } from "./HelperComponents";
 import { PlotComponent } from "./PlotComponent";
-import { TableView } from "./TableView";
+import { TableViewCustom } from "./TableViewCustom";
 import { WorkerScienceComponent } from "./WorkerScienceComponent";
 
 type Tab = "resources" | "buildings" | "empire";
@@ -537,10 +537,14 @@ function ResourcesTab({ gameState }: IBuildingComponentProps): React.ReactNode {
                </button>
             </Tippy>
          </div>
-         <TableView
+         <TableViewCustom
             classNames="sticky-header f1"
             header={[
-               { name: "", sortable: true },
+               {
+                  name: "",
+                  sortable: true,
+                  content: "<div class='m-icon small'>sort_by_alpha</div>",
+               },
                { name: t(L.ResourceAmount), right: true, sortable: true },
                { name: t(L.StatisticsResourcesDeficit), right: true, sortable: true },
                { name: t(L.StatisticsResourcesRunOut), right: true, sortable: true },
@@ -601,6 +605,51 @@ function ResourcesTab({ gameState }: IBuildingComponentProps): React.ReactNode {
                const timeLeft = deficit < 0 ? Math.abs((1000 * amount) / deficit) : Number.POSITIVE_INFINITY;
 
                return (
+                  <div key={res} className="table-row">
+                     <div className="table-cell">
+                        <div>{r.name()}</div>
+                        <Tippy content={t(L.EmpireValue)}>
+                           <span className="text-desc text-small">
+                              <FormatNumber value={Config.ResourcePrice[res]} />
+                           </span>
+                        </Tippy>
+                     </div>
+                     <div className="table-cell" style={{ alignSelf: "flex-end" }}>
+                        <FormatNumber value={amount} />
+                     </div>
+                     <div className="table-cell">
+                        <div className={classNames({ "text-right": true, "text-red": deficit < 0 })}>
+                           <FormatNumber value={deficit} />
+                        </div>
+                        <Tippy
+                           content={t(L.StatisticsResourcesDeficitDesc, {
+                              output: formatNumber(output),
+                              input: formatNumber(input),
+                           })}
+                        >
+                           <div className="text-small text-right text-desc">
+                              <span className="pointer" onClick={() => highlightResourcesUsed(res, "output")}>
+                                 <FormatNumber value={output} />
+                              </span>{" "}
+                              -{" "}
+                              <span className="pointer" onClick={() => highlightResourcesUsed(res, "input")}>
+                                 <FormatNumber value={input} />
+                              </span>
+                           </div>
+                        </Tippy>
+                     </div>
+                     <div
+                        className={classNames({
+                           "text-red": deficit < 0,
+                           "table-cell text-right text-small": true,
+                        })}
+                     >
+                        {formatHMS(timeLeft)}
+                     </div>
+                  </div>
+               );
+
+               /*return (
                   <tr key={res}>
                      <td>
                         <div>{r.name()}</div>
@@ -638,7 +687,7 @@ function ResourcesTab({ gameState }: IBuildingComponentProps): React.ReactNode {
                         {formatHMS(timeLeft)}
                      </td>
                   </tr>
-               );
+               );*/
             }}
          />
       </article>
