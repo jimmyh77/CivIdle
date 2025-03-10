@@ -1,9 +1,14 @@
-#resource-watch-panel .resource-watch-bar {
-   height: 15rem;
-   width: 22rem;
+#resource-watch-panel .window {
+   height: 20rem;
+   width: 26rem;
    position: absolute;
-   top: 6rem;
+   top: 12rem;
    left: 1rem;
+}
+
+#resource-watch-panel .resource-watch-bar {
+   height: 15.5rem;
+   width: 100%;
    display: flex;
    font-weight: bold;
    color: #333;

@@ -8,6 +8,7 @@ import { useCurrentTick } from "../logic/ClientUpdate";
 import { playClick } from "../visuals/Sound";
 import { FormatNumber } from "./HelperComponents";
 import { TableView } from "./TableView";
+import { TitleBarComponent } from "./TitleBarComponent";
 
 export let resourceWatchList: Resource[] = ["Wood", "Stone", "PlanetaryRover"];
 
@@ -23,50 +24,55 @@ export function ResourceWatchPanel(): React.ReactNode {
    const tick = useCurrentTick();
 
    return (
-      <div className={classNames({ "resource-watch-bar window": true })}>
-         <TableView
-            classNames="sticky-header f1"
-            header={[
-               { name: "", sortable: true },
-               { name: t(L.ResourceAmount), right: true, sortable: true },
-               { name: "", sortable: false },
-            ]}
-            data={resourceWatchList}
-            compareFunc={(a, b, i) => {
-               switch (i) {
-                  case 1:
-                     return (tick.resourceAmount.get(a) ?? 0) - (tick.resourceAmount.get(b) ?? 0);
-                  default: {
-                     return Config.Resource[a].name().localeCompare(Config.Resource[b].name());
-                  }
-               }
-            }}
-            renderRow={(res) => {
-               const r = Config.Resource[res];
-               const amount = tick.resourceAmount.get(res) ?? 0;
+      <div className="window">
+         <TitleBarComponent>Resource Watch</TitleBarComponent>
+         <div className="window-body">
+            <div className={classNames({ "resource-watch-bar ": true })}>
+               <TableView
+                  classNames="sticky-header f1"
+                  header={[
+                     { name: "", sortable: true },
+                     { name: t(L.ResourceAmount), right: true, sortable: true },
+                     { name: "", sortable: false },
+                  ]}
+                  data={resourceWatchList}
+                  compareFunc={(a, b, i) => {
+                     switch (i) {
+                        case 1:
+                           return (tick.resourceAmount.get(a) ?? 0) - (tick.resourceAmount.get(b) ?? 0);
+                        default: {
+                           return Config.Resource[a].name().localeCompare(Config.Resource[b].name());
+                        }
+                     }
+                  }}
+                  renderRow={(res) => {
+                     const r = Config.Resource[res];
+                     const amount = tick.resourceAmount.get(res) ?? 0;
 
-               return (
-                  <tr key={res}>
-                     <td>{r.name()}</td>
-                     <td className="right">
-                        <FormatNumber value={amount} />
-                     </td>
-                     <td
-                        className="pointer"
-                        onClick={() => {
-                           playClick();
-                           toggleResourceWatch(res);
-                           notifyGameStateUpdate();
-                        }}
-                     >
-                        <Tippy content={t(L.RemoveFromResourceWatch)}>
-                           <div className="m-icon small text-red pointer">delete</div>
-                        </Tippy>
-                     </td>
-                  </tr>
-               );
-            }}
-         />
+                     return (
+                        <tr key={res}>
+                           <td>{r.name()}</td>
+                           <td className="right">
+                              <FormatNumber value={amount} />
+                           </td>
+                           <td
+                              className="pointer"
+                              onClick={() => {
+                                 playClick();
+                                 toggleResourceWatch(res);
+                                 notifyGameStateUpdate();
+                              }}
+                           >
+                              <Tippy content={t(L.RemoveFromResourceWatch)}>
+                                 <div className="m-icon small text-red pointer">delete</div>
+                              </Tippy>
+                           </td>
+                        </tr>
+                     );
+                  }}
+               />
+            </div>
+         </div>
       </div>
    );
 }
