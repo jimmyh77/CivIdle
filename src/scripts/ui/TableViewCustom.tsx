@@ -30,9 +30,22 @@ export function TableViewCustom<T>({
    const [asc, setAsc] = useState(sortingState?.asc ?? true);
    return (
       <div className={`table-view-custom ${classNames ?? ""}`}>
-         <div className="table-container" style={{ gridTemplateColumns: "2rem 15rem 15rem auto" }}>
+         <div className="table-container" style={{ gridTemplateColumns: "4rem 10rem 8rem 8rem 10rem auto" }}>
             {header.map((h, index) => (
-               <div key={index} className={`table-header ${h.className ?? ""}`} onClick={() => {}}>
+               <div
+                  key={index}
+                  className={`table-header ${h.className ?? ""}`}
+                  onClick={() => {
+                     if (h.sortable) {
+                        setSortColumn(index);
+                        setAsc(!asc);
+                        if (sortingState) {
+                           sortingState.asc = !asc;
+                           sortingState.column = index;
+                        }
+                     }
+                  }}
+               >
                   {h.name}
                   <span dangerouslySetInnerHTML={{ __html: h.content }} />
                </div>

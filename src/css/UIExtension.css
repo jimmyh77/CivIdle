@@ -602,29 +602,35 @@ ul.tree-view > li:first-child {
 
 .table-view-custom .table-container {
    display: grid;
-   grid-template-columns: repeat(4, 1fr);
+   grid-template-columns: repeat(5, 1fr);
    max-width: 600px;
+   overflow-x: hidden;
 }
 
 .table-view-custom .table-container .table-header {
    font-weight: bold;
-   background: #ddd;
    padding: 5px;
-   cursor: pointer;
    text-align: center;
+   background-color: rgb(192, 192, 192);
+   font-weight: normal;
+   box-shadow: inset -1px -1px #404040, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
+}
+.table-view-custom .right {
+   text-align: right !important;
 }
 
 .table-view-custom .table-container .table-row {
    display: contents;
+}
+.table-view-custom .table-container .table-row:nth-child(even) {
+   background: #efefef;
 }
 .table-view-custom .table-container .table-cell {
    padding: 5px;
    border-bottom: 1px solid #ccc;
    text-align: center;
    text-wrap-mode: nowrap;
-}
-.table-view-custom .table-container .sub-row {
-   display: contents;
+   background-color: transparent;
 }
 
 .nowrap {
