@@ -27,7 +27,6 @@ import type { IBuildingData } from "../../../shared/logic/Tile";
 import {
    forEach,
    formatHMS,
-   formatNumber,
    hasFlag,
    keysOf,
    mReduceOf,
@@ -545,9 +544,28 @@ function ResourcesTab({ gameState }: IBuildingComponentProps): React.ReactNode {
                   sortable: true,
                   content: "<div class='m-icon small'>sort_by_alpha</div>",
                },
-               { name: t(L.ResourceAmount), right: true, sortable: true },
-               { name: t(L.StatisticsResourcesDeficit), right: true, sortable: true },
-               { name: t(L.StatisticsResourcesRunOut), right: true, sortable: true },
+               { name: t(L.ResourceAmount), right: true, sortable: true, className: "right" },
+               {
+                  name: "",
+                  right: true,
+                  sortable: true,
+                  content: "<div class='m-icon small'>exit_to_app</div>",
+                  className: "right",
+               },
+               {
+                  name: "",
+                  right: true,
+                  sortable: true,
+                  content: "<div class='m-icon small'>output</div>",
+                  className: "right",
+               },
+               { name: t(L.StatisticsResourcesDeficit), right: true, sortable: true, className: "right" },
+               {
+                  name: "",
+                  right: true,
+                  sortable: true,
+                  content: "<div class='m-icon small'>hourglass_Bottom</div>",
+               },
             ]}
             sortingState={resourceTabSortingState}
             data={keysOf(unlockedResourcesList).filter((v) => {
@@ -568,12 +586,10 @@ function ResourcesTab({ gameState }: IBuildingComponentProps): React.ReactNode {
                         (Tick.current.resourceAmount.get(a) ?? 0) - (Tick.current.resourceAmount.get(b) ?? 0)
                      );
                   case 2:
-                     return (
-                        (outputs.get(a) ?? 0) -
-                        (inputs.get(a) ?? 0) -
-                        ((outputs.get(b) ?? 0) - (inputs.get(b) ?? 0))
-                     );
-                  case 3: {
+                     return (outputs.get(a) ?? 0) - (outputs.get(b) ?? 0);
+                  case 3:
+                     return (inputs.get(a) ?? 0) - (inputs.get(b) ?? 0);
+                  case 4: {
                      const deficitA = (outputs.get(a) ?? 0) - (inputs.get(a) ?? 0);
                      const deficitB = (outputs.get(b) ?? 0) - (inputs.get(b) ?? 0);
                      const timeLeftA =
@@ -614,29 +630,19 @@ function ResourcesTab({ gameState }: IBuildingComponentProps): React.ReactNode {
                            </span>
                         </Tippy>
                      </div>
-                     <div className="table-cell" style={{ alignSelf: "flex-end" }}>
+                     <div className="table-cell" style={{ alignSelf: "flex-end", textAlign: "right" }}>
                         <FormatNumber value={amount} />
+                     </div>
+                     <div className="table-cell" style={{ textAlign: "right" }}>
+                        <FormatNumber value={output} />
+                     </div>
+                     <div className="table-cell" style={{ textAlign: "right" }}>
+                        <FormatNumber value={input} />
                      </div>
                      <div className="table-cell">
                         <div className={classNames({ "text-right": true, "text-red": deficit < 0 })}>
                            <FormatNumber value={deficit} />
                         </div>
-                        <Tippy
-                           content={t(L.StatisticsResourcesDeficitDesc, {
-                              output: formatNumber(output),
-                              input: formatNumber(input),
-                           })}
-                        >
-                           <div className="text-small text-right text-desc">
-                              <span className="pointer" onClick={() => highlightResourcesUsed(res, "output")}>
-                                 <FormatNumber value={output} />
-                              </span>{" "}
-                              -{" "}
-                              <span className="pointer" onClick={() => highlightResourcesUsed(res, "input")}>
-                                 <FormatNumber value={input} />
-                              </span>
-                           </div>
-                        </Tippy>
                      </div>
                      <div
                         className={classNames({
