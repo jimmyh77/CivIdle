@@ -17,11 +17,23 @@
 }
 
 #resource-panel .resource-bar .resource-watch-panel {
-   height: 5rem;
+   height: 6rem;
    width: 84rem;
    display: flex;
    align-items: center;
    overflow-x: scroll;
+}
+#resource-panel .resource-bar .resource-watch-panel .tree-view {
+   display: flex;
+   padding-bottom: 0;
+   padding-top: 0;
+   overflow-y: clip;
+   width: auto;
+}
+#resource-panel .resource-bar .resource-watch-panel .tree-view li {
+   display: flex;
+   align-items: center;
+   height: 4rem;
 }
 #resource-panel .resource-bar .resource-watch-panel div {
    text-wrap-mode: nowrap;
