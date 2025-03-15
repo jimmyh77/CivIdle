@@ -9,6 +9,7 @@ import { playClick } from "../visuals/Sound";
 import { FormatNumber } from "./HelperComponents";
 import { TableView } from "./TableView";
 import { TitleBarComponent } from "./TitleBarComponent";
+import { getTradableAmount } from "../../../shared/logic/PlayerTradeLogic";
 
 export let resourceWatchList: Resource[] = ["Wood", "Stone", "PlanetaryRover"];
 
@@ -33,6 +34,7 @@ export function ResourceWatchPanel(): React.ReactNode {
                   header={[
                      { name: "", sortable: true },
                      { name: t(L.ResourceAmount), right: true, sortable: true },
+                     { name: t(L.Tradable), right: true, sortable: true },
                      { name: "", sortable: false },
                   ]}
                   data={resourceWatchList}
@@ -40,6 +42,8 @@ export function ResourceWatchPanel(): React.ReactNode {
                      switch (i) {
                         case 1:
                            return (tick.resourceAmount.get(a) ?? 0) - (tick.resourceAmount.get(b) ?? 0);
+                        case 2:
+                           return getTradableAmount(a) - getTradableAmount(b);
                         default: {
                            return Config.Resource[a].name().localeCompare(Config.Resource[b].name());
                         }
@@ -54,6 +58,9 @@ export function ResourceWatchPanel(): React.ReactNode {
                            <td>{r.name()}</td>
                            <td className="right">
                               <FormatNumber value={amount} />
+                           </td>
+                           <td className="right">
+                              <FormatNumber value={getTradableAmount(res)} />
                            </td>
                            <td
                               className="pointer"

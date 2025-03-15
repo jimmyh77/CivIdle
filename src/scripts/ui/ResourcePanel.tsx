@@ -48,6 +48,7 @@ import { FormatNumber } from "./HelperComponents";
 import { LoadingPage, LoadingPageStage } from "./LoadingPage";
 import { resourceWatchList } from "./ResourceWatchPanel";
 import { TilePage } from "./TilePage";
+import { getTradableAmount } from "../../../shared/logic/PlayerTradeLogic";
 
 export function ResourcePanel(): React.ReactNode {
    const tick = useCurrentTick();
@@ -424,17 +425,33 @@ export function ResourcePanel(): React.ReactNode {
                </select>
             </div>
          </div>
+         <div className="separator"></div>
          <div className="row resource-watch-panel">
-            {resourceWatchList.map((value) => {
-               const r = Config.Resource[value];
-               const amount = tick.resourceAmount.get(value) ?? 0;
+            <ul className="tree-view">
+               {resourceWatchList.map((value) => {
+                  const r = Config.Resource[value];
+                  const amount = tick.resourceAmount.get(value) ?? 0;
+                  const tradableAmount = getTradableAmount(value);
 
-               return (
-                  <div key={value} style={{ margin: "0 1rem", textWrap: "no-wrap" }}>
-                     {r.name()}: <FormatNumber value={amount} />
-                  </div>
-               );
-            })}
+                  return (
+                     <li key={value} style={{ margin: "0 1rem", textWrap: "no-wrap" }}>
+                        <Tippy
+                           content={
+                              <span>
+                                 {t(L.Tradable)}
+                                 {": "}
+                                 <FormatNumber value={tradableAmount} />
+                              </span>
+                           }
+                        >
+                           <div>
+                              {r.name()}: <FormatNumber value={amount} />
+                           </div>
+                        </Tippy>
+                     </li>
+                  );
+               })}
+            </ul>
          </div>
       </div>
    );
