@@ -1526,4 +1526,11 @@ export const EN = {
    RebirthHistory: "Rebirth History",
    RebirthTime: "Rebirth Time",
    Civilization: "Civilization",
+   ResourceOverview: "Resource Overview",
+   ResourceOverviewValue: "Value",
+   ResourceOverviewAmount: "Amount",
+   ResourceOverviewProduction: "Production",
+   ResourceOverviewConsumption: "Consumption",
+   ResourceOverviewDeficit: "Deficit",
+   ResourceOverviewRunOut: "RunOut",
 };

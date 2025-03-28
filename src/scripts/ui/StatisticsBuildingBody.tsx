@@ -42,8 +42,10 @@ import { Singleton } from "../utilities/Singleton";
 import { BuildingColorComponent } from "./BuildingColorComponent";
 import type { IBuildingComponentProps } from "./BuildingPage";
 import { BuildingFilter, Filter } from "./FilterComponent";
+import { showModal } from "./GlobalModal";
 import { FormatNumber } from "./HelperComponents";
 import { PlotComponent } from "./PlotComponent";
+import { ResourceOverviewModal } from "./ResourceOverviewModal";
 import { TableView } from "./TableView";
 import { WorkerScienceComponent } from "./WorkerScienceComponent";
 
@@ -459,7 +461,7 @@ const resourceTabSortingState = { column: 0, asc: true };
 let savedResourceTierFilter = BuildingFilter.None;
 let savedResourceSearch = "";
 
-function ResourcesTab({ gameState }: IBuildingComponentProps): React.ReactNode {
+function ResourcesTab({ gameState, xy }: IBuildingComponentProps): React.ReactNode {
    const [resourceTierFilter, _setResourceTierFilter] = useState<BuildingFilter>(savedResourceTierFilter);
    const setResourceTierFilter = (newFilter: BuildingFilter) => {
       _setResourceTierFilter(newFilter);
@@ -523,6 +525,16 @@ function ResourcesTab({ gameState }: IBuildingComponentProps): React.ReactNode {
                );
             })}
             <div className="f1"></div>
+
+            <Tippy content={t(L.ResourceOverview)}>
+               <button
+                  style={{ width: 27, padding: 0 }}
+                  onClick={() => showModal(<ResourceOverviewModal gameState={gameState} xy={xy} />)}
+               >
+                  <div className="m-icon small">query_stats</div>
+               </button>
+            </Tippy>
+
             <Tippy content={showTheoreticalValue ? t(L.TheoreticalData) : t(L.LiveData)}>
                <button
                   className={classNames({
