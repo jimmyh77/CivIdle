@@ -4,8 +4,13 @@ import type { IBuildingDefinition } from "../../../shared/definitions/BuildingDe
 import { NoPrice, NoStorage, type Resource } from "../../../shared/definitions/ResourceDefinitions";
 import { IOCalculation } from "../../../shared/logic/BuildingLogic";
 import { Config } from "../../../shared/logic/Config";
-import { getBuildingIO, getResourceIO, unlockedResources } from "../../../shared/logic/IntraTickCache";
-import { Tick } from "../../../shared/logic/TickLogic";
+import {
+   getBuildingIO,
+   getResourceIO,
+   getXyBuildings,
+   unlockedResources,
+} from "../../../shared/logic/IntraTickCache";
+import { NotProducingReason, Tick } from "../../../shared/logic/TickLogic";
 import {
    forEach,
    formatHMS,
@@ -29,6 +34,7 @@ let savedResourceTierFilter = BuildingFilter.None;
 let savedResourceSearch = "";
 
 export function ResourceOverviewModal({ gameState }: IBuildingComponentProps): React.ReactNode {
+   const [expandedRow, setExpandedRow] = useState<Resource | null>();
    const [resourceTierFilter, _setResourceTierFilter] = useState<BuildingFilter>(savedResourceTierFilter);
    const setResourceTierFilter = (newFilter: BuildingFilter) => {
       _setResourceTierFilter(newFilter);
@@ -171,12 +177,111 @@ export function ResourceOverviewModal({ gameState }: IBuildingComponentProps): R
                   const timeLeft =
                      deficit < 0 ? Math.abs((1000 * amount) / deficit) : Number.POSITIVE_INFINITY;
 
+                  let extraRowContent = null;
+                  if (expandedRow) {
+                     const buildings = getXyBuildings(gameState);
+                     extraRowContent = (
+                        <tr>
+                           <td colSpan={7}>
+                              <TableView
+                                 classNames="sticky-header f1"
+                                 header={[
+                                    { name: "", sortable: true },
+                                    { name: "Level", sortable: true },
+                                    { name: "Production", sortable: true },
+                                    { name: "Consumption", sortable: true },
+                                    { name: "State", sortable: true },
+                                 ]}
+                                 data={Array.from(buildings).filter((value) => {
+                                    const b = value[1];
+                                    return (
+                                       expandedRow in Config.Building[b.type].output ||
+                                       expandedRow in Config.Building[b.type].input
+                                    );
+                                 })}
+                                 renderRow={(value) => {
+                                    const xy = value[0];
+                                    const b = value[1];
+                                    const buildingOutputs = getBuildingIO(
+                                       xy,
+                                       "output",
+                                       IOCalculation.Multiplier | IOCalculation.Capacity,
+                                       gameState,
+                                    );
+                                    const buildingInputs = getBuildingIO(
+                                       xy,
+                                       "input",
+                                       IOCalculation.Multiplier | IOCalculation.Capacity,
+                                       gameState,
+                                    );
+                                    let building_state = "Active";
+                                    if (b.capacity === 0) {
+                                       building_state = "Shutdown";
+                                    } else if (
+                                       Tick.current.notProducingReasons.get(xy) ===
+                                       NotProducingReason.StorageFull
+                                    ) {
+                                       building_state = "Storage Full";
+                                    } else if (
+                                       Tick.current.notProducingReasons.get(xy) === NotProducingReason.NoPower
+                                    ) {
+                                       building_state = "No Power";
+                                    } else if (
+                                       Tick.current.notProducingReasons.get(xy) ===
+                                       NotProducingReason.NotOnDeposit
+                                    ) {
+                                       building_state = "No Deposit";
+                                    } else if (
+                                       Tick.current.notProducingReasons.get(xy) ===
+                                       NotProducingReason.NotEnoughWorkers
+                                    ) {
+                                       building_state = "Not Enough Workers";
+                                    } else if (
+                                       Tick.current.notProducingReasons.get(xy) ===
+                                       NotProducingReason.NotEnoughResources
+                                    ) {
+                                       building_state = "Not Enough Resources";
+                                    }
+                                    return (
+                                       <tr>
+                                          <td>{Config.Building[b.type].name()}</td>
+                                          <td>{b.level}</td>
+                                          <td>{buildingOutputs[expandedRow] ?? 0}</td>
+                                          <td>{buildingInputs[expandedRow] ?? 0}</td>
+                                          <td>{building_state}</td>
+                                       </tr>
+                                    );
+                                 }}
+                                 compareFunc={(a, b, i) => {
+                                    switch (i) {
+                                       default:
+                                          return Config.Building[a[1].type]
+                                             .name()
+                                             .localeCompare(Config.Building[b[1].type].name());
+                                    }
+                                 }}
+                              />
+                           </td>
+                        </tr>
+                     );
+                  }
                   return (
                      <>
                         <tr key={res}>
                            <td>
                               <div className="row">
-                                 <div className="m-icon small pointer">add_box</div>
+                                 <div
+                                    className="m-icon small pointer"
+                                    onClick={() => {
+                                       if (expandedRow === res) {
+                                          setExpandedRow(null);
+                                       } else {
+                                          setExpandedRow(res);
+                                       }
+                                    }}
+                                 >
+                                    {expandedRow === res ? <>indeterminate_check_box</> : <>add_box</>}
+                                 </div>
                                  <div>{r.name()}</div>
                               </div>
                            </td>
@@ -209,15 +314,7 @@ export function ResourceOverviewModal({ gameState }: IBuildingComponentProps): R
                               {formatHMS(timeLeft)}
                            </td>
                         </tr>
-                        <tr>
-                           <td colSpan={7}>
-                              <table>
-                                 <tr>
-                                    <td>1</td>
-                                 </tr>
-                              </table>
-                           </td>
-                        </tr>
+                        {expandedRow === res ? extraRowContent : null}
                      </>
                   );
                }}
