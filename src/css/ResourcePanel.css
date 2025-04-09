@@ -1,42 +1,13 @@
 #resource-panel .resource-bar {
+   height: 4rem;
    position: absolute;
    top: 1rem;
    left: 1rem;
-   display: flex;
-   flex-direction: column;
-}
-
-#resource-panel .resource-bar .row {
-   height: 4rem;
    display: flex;
    align-items: center;
    font-weight: bold;
    color: #333;
    font-size: 1.2rem;
-   width: 100%;
-}
-
-#resource-panel .resource-bar .resource-watch-panel {
-   height: 6rem;
-   width: 84rem;
-   display: flex;
-   align-items: center;
-   overflow-x: scroll;
-}
-#resource-panel .resource-bar .resource-watch-panel .tree-view {
-   display: flex;
-   padding-bottom: 0;
-   padding-top: 0;
-   overflow-y: clip;
-   width: auto;
-}
-#resource-panel .resource-bar .resource-watch-panel .tree-view li {
-   display: flex;
-   align-items: center;
-   height: 4rem;
-}
-#resource-panel .resource-bar .resource-watch-panel div {
-   text-wrap-mode: nowrap;
 }
 
 #resource-panel .resource-bar .row > .section {
