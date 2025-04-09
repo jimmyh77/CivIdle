@@ -3,13 +3,14 @@ import classNames from "classnames";
 import type { Resource } from "../../../shared/definitions/ResourceDefinitions";
 import { Config } from "../../../shared/logic/Config";
 import { notifyGameStateUpdate } from "../../../shared/logic/GameStateLogic";
+import { getTradableAmount } from "../../../shared/logic/PlayerTradeLogic";
 import { L, t } from "../../../shared/utilities/i18n";
+import { useResourceWatchVisible } from "../Global";
 import { useCurrentTick } from "../logic/ClientUpdate";
 import { playClick } from "../visuals/Sound";
 import { FormatNumber } from "./HelperComponents";
 import { TableView } from "./TableView";
 import { TitleBarComponent } from "./TitleBarComponent";
-import { getTradableAmount } from "../../../shared/logic/PlayerTradeLogic";
 
 export let resourceWatchList: Resource[] = ["Wood", "Stone", "PlanetaryRover"];
 
@@ -23,10 +24,11 @@ export function toggleResourceWatch(res: Resource) {
 
 export function ResourceWatchPanel(): React.ReactNode {
    const tick = useCurrentTick();
+   const isResourceWatchVisible = useResourceWatchVisible();
 
-   return (
+   return isResourceWatchVisible ? (
       <div className="window">
-         <TitleBarComponent>Resource Watch</TitleBarComponent>
+         <TitleBarComponent>{t(L.ResourceWatch)}</TitleBarComponent>
          <div className="window-body">
             <div className={classNames({ "resource-watch-bar ": true })}>
                <TableView
@@ -44,9 +46,8 @@ export function ResourceWatchPanel(): React.ReactNode {
                            return (tick.resourceAmount.get(a) ?? 0) - (tick.resourceAmount.get(b) ?? 0);
                         case 2:
                            return getTradableAmount(a) - getTradableAmount(b);
-                        default: {
+                        default:
                            return Config.Resource[a].name().localeCompare(Config.Resource[b].name());
-                        }
                      }
                   }}
                   renderRow={(res) => {
@@ -81,5 +82,7 @@ export function ResourceWatchPanel(): React.ReactNode {
             </div>
          </div>
       </div>
+   ) : (
+      <></>
    );
 }

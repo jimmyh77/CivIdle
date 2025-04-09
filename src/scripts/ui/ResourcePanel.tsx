@@ -33,7 +33,14 @@ import {
    type Tile,
 } from "../../../shared/utilities/Helper";
 import { L, t } from "../../../shared/utilities/i18n";
-import { FloatingModeChanged, useFloatingMode, useGameOptions, useGameState } from "../Global";
+import {
+   FloatingModeChanged,
+   ResourceWatchVisibleChanged,
+   useFloatingMode,
+   useGameOptions,
+   useGameState,
+   useResourceWatchVisible,
+} from "../Global";
 import { useCurrentTick } from "../logic/ClientUpdate";
 import { TimeSeries } from "../logic/TimeSeries";
 import { SteamClient, isSteam } from "../rpc/SteamClient";
@@ -46,9 +53,7 @@ import { playClick, playError } from "../visuals/Sound";
 import { showToast } from "./GlobalModal";
 import { FormatNumber } from "./HelperComponents";
 import { LoadingPage, LoadingPageStage } from "./LoadingPage";
-import { resourceWatchList } from "./ResourceWatchPanel";
 import { TilePage } from "./TilePage";
-import { getTradableAmount } from "../../../shared/logic/PlayerTradeLogic";
 
 export function ResourcePanel(): React.ReactNode {
    const tick = useCurrentTick();
@@ -86,6 +91,7 @@ export function ResourcePanel(): React.ReactNode {
          TimeSeries.science[TimeSeries.science.length - 2];
    }
 
+   const isResourceWatchVisible = useResourceWatchVisible();
    const [favoriteActive, setFavoriteActive] = useState(false);
    useEffect(() => {
       function onPointerDown(e: PointerEvent) {
@@ -216,6 +222,27 @@ export function ResourcePanel(): React.ReactNode {
                         })}
                   </div>
                </div>
+            )}
+
+            {!isFloating ? (
+               <>
+                  <div className="separator-vertical" />
+                  <Tippy content={t(L.ResourceWatch)} placement="bottom">
+                     <div className={classNames({ "menu-button": true, active: isResourceWatchVisible })}>
+                        <div
+                           onPointerDown={(e) => {
+                              ResourceWatchVisibleChanged.emit(!isResourceWatchVisible);
+                              e.nativeEvent.stopPropagation();
+                           }}
+                           className={classNames({ "m-icon fill": true })}
+                        >
+                           mystery
+                        </div>
+                     </div>
+                  </Tippy>
+               </>
+            ) : (
+               <></>
             )}
             <div className="separator-vertical" />
             {tick.happiness ? (
@@ -424,34 +451,6 @@ export function ResourcePanel(): React.ReactNode {
                   ))}
                </select>
             </div>
-         </div>
-         <div className="separator"></div>
-         <div className="row resource-watch-panel">
-            <ul className="tree-view">
-               {resourceWatchList.map((value) => {
-                  const r = Config.Resource[value];
-                  const amount = tick.resourceAmount.get(value) ?? 0;
-                  const tradableAmount = getTradableAmount(value);
-
-                  return (
-                     <li key={value} style={{ margin: "0 1rem", textWrap: "no-wrap" }}>
-                        <Tippy
-                           content={
-                              <span>
-                                 {t(L.Tradable)}
-                                 {": "}
-                                 <FormatNumber value={tradableAmount} />
-                              </span>
-                           }
-                        >
-                           <div>
-                              {r.name()}: <FormatNumber value={amount} />
-                           </div>
-                        </Tippy>
-                     </li>
-                  );
-               })}
-            </ul>
          </div>
       </div>
    );
